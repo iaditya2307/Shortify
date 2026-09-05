@@ -20,24 +20,34 @@ from .service import (
 
 Base.metadata.create_all(bind=engine)
 
-STATIC_DIR = Path(__file__).parent / "static"
+BASE_DIR = Path(__file__).resolve().parent
+STATIC_DIR = BASE_DIR / "static"
+
+if not (STATIC_DIR / "index.html").exists():
+    STATIC_DIR = BASE_DIR.parent / "public" / "static"
+    if not (STATIC_DIR / "index.html").exists():
+        STATIC_DIR = BASE_DIR.parent / "public"
 
 RESERVED_PATHS = frozenset({
     "api", "docs", "redoc", "health", "static", "openapi.json",
 })
 
 app = FastAPI(
-    title="URL Shortener",
+    title="Shortify URL Shortener",
     version="1.0.0",
-    description="A simple URL shortener built with FastAPI and SQLite.",
+    description="URL shortener built with FastAPI and Supabase PostgreSQL.",
 )
 
-app.mount("/static", StaticFiles(directory=STATIC_DIR), name="static")
+if STATIC_DIR.exists():
+    app.mount("/static", StaticFiles(directory=STATIC_DIR), name="static")
 
 
 @app.get("/")
 def home():
-    return FileResponse(STATIC_DIR / "index.html")
+    index_path = STATIC_DIR / "index.html"
+    if not index_path.exists():
+        index_path = BASE_DIR.parent / "public" / "index.html"
+    return FileResponse(index_path)
 
 
 @app.get("/health")
