@@ -4,10 +4,13 @@ const MAX_HISTORY = 10;
 // Element references
 const form = document.getElementById("shorten-form");
 const longUrlInput = document.getElementById("long-url");
+const pasteBtn = document.getElementById("paste-btn");
 const customAliasInput = document.getElementById("custom-alias");
 const expiresAtInput = document.getElementById("expires-at");
 const submitBtn = document.getElementById("submit-btn");
 const urlError = document.getElementById("url-error");
+const domainPreview = document.getElementById("domain-preview");
+const previewDomain = document.getElementById("preview-domain");
 const resultCard = document.getElementById("result-card");
 const resultLink = document.getElementById("result-link");
 const resultOriginal = document.getElementById("result-original");
@@ -49,7 +52,8 @@ function showToast(message, isError = false) {
 
 function setLoading(loading) {
   submitBtn.disabled = loading;
-  submitBtn.querySelector(".btn-text").hidden = loading;
+  submitBtn.querySelector(".btn-label").hidden = loading;
+  submitBtn.querySelector(".shortcut-kbd").hidden = loading;
   submitBtn.querySelector(".btn-spinner").hidden = !loading;
 }
 
@@ -65,6 +69,22 @@ function normalizeUrl(value) {
     return `https://${trimmed}`;
   }
   return trimmed;
+}
+
+function updateDomainPreview() {
+  const rawUrl = longUrlInput.value.trim();
+  if (!rawUrl) {
+    domainPreview.hidden = true;
+    return;
+  }
+  try {
+    const fullUrl = normalizeUrl(rawUrl);
+    const parsed = new URL(fullUrl);
+    previewDomain.textContent = parsed.hostname;
+    domainPreview.hidden = false;
+  } catch {
+    domainPreview.hidden = true;
+  }
 }
 
 function getHistory() {
@@ -138,7 +158,7 @@ function showResult(data) {
   resultOriginal.textContent = data.long_url;
   resultCard.hidden = false;
   copyBtn.classList.remove("copied");
-  copyLabel.textContent = "Copy Link";
+  copyLabel.textContent = "Copy";
   resultCard.scrollIntoView({ behavior: "smooth", block: "nearest" });
   saveToHistory(data);
 }
@@ -147,8 +167,8 @@ function showResult(data) {
 function generateQRCode(url) {
   qrContainer.innerHTML = "";
   if (window.qrcode) {
-    const typeNumber = 0; // Auto detect
-    const errorCorrectionLevel = 'H'; // High
+    const typeNumber = 0;
+    const errorCorrectionLevel = 'H';
     const qr = window.qrcode(typeNumber, errorCorrectionLevel);
     qr.addData(url);
     qr.make();
@@ -181,7 +201,7 @@ async function fetchAndShowStats(shortCode) {
     const data = await res.json();
     statClicks.textContent = data.click_count || 0;
     statStatus.textContent = data.is_active ? "Active" : "Inactive";
-    statStatus.className = "stat-value " + (data.is_active ? "status-active" : "error");
+    statStatus.className = "metric-val " + (data.is_active ? "active-status" : "error");
     statCreated.textContent = data.created_at ? new Date(data.created_at).toLocaleString() : "-";
     statExpires.textContent = data.expires_at ? new Date(data.expires_at).toLocaleString() : "Never";
     statsModal.hidden = false;
@@ -190,7 +210,24 @@ async function fetchAndShowStats(shortCode) {
   }
 }
 
-// Event Listeners
+// Input Paste Event Handler
+pasteBtn.addEventListener("click", async () => {
+  try {
+    const text = await navigator.clipboard.readText();
+    if (text) {
+      longUrlInput.value = text;
+      showToast("Pasted from clipboard!");
+      updateDomainPreview();
+      longUrlInput.focus();
+    }
+  } catch {
+    showToast("Please allow clipboard access to paste.", true);
+  }
+});
+
+longUrlInput.addEventListener("input", updateDomainPreview);
+
+// Form Event Handler
 form.addEventListener("submit", async (e) => {
   e.preventDefault();
   showError("");
@@ -282,7 +319,7 @@ copyBtn.addEventListener("click", async () => {
     copyLabel.textContent = "Copied!";
     setTimeout(() => {
       copyBtn.classList.remove("copied");
-      copyLabel.textContent = "Copy Link";
+      copyLabel.textContent = "Copy";
     }, 2000);
   }
 });

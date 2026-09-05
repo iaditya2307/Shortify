@@ -4,109 +4,125 @@
   <meta charset="UTF-8" />
   <meta name="viewport" content="width=device-width, initial-scale=1.0" />
   <meta name="description" content="Shorten long URLs instantly with Supabase database storage, real-time analytics, and instant QR code generation." />
-  <title>Shortify — Ultra-Fast URL Shortener & Analytics</title>
+  <title>Shortify — The Ultimate URL Shortener & Analytics</title>
   <link rel="preconnect" href="https://fonts.googleapis.com" />
   <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin />
-  <link href="https://fonts.googleapis.com/css2?family=JetBrains+Mono:wght@400;500;600&family=Outfit:wght@300;400;500;600;700;800&display=swap" rel="stylesheet" />
+  <link href="https://fonts.googleapis.com/css2?family=Plus+Jakarta+Sans:wght@300;400;500;600;700;800&family=JetBrains+Mono:wght@400;500;600&display=swap" rel="stylesheet" />
   <link rel="stylesheet" href="/static/css/style.css" />
   <script src="https://cdn.jsdelivr.net/npm/qrcode-generator@1.4.4/qrcode.min.js"></script>
 </head>
 <body>
-  <div class="ambient-glow glow-1"></div>
-  <div class="ambient-glow glow-2"></div>
+  <!-- Ambient Raylight Aura -->
+  <div class="spotlight-glow"></div>
+  <div class="ambient-orb orb-1"></div>
+  <div class="ambient-orb orb-2"></div>
 
   <div class="page">
     <header class="header">
       <div class="logo">
-        <div class="logo-badge">
+        <div class="logo-icon-wrapper">
           <svg class="logo-svg" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5">
             <path d="M10 13a5 5 0 0 0 7.54.54l3-3a5 5 0 0 0-7.07-7.07l-1.72 1.71"></path>
             <path d="M14 11a5 5 0 0 0-7.54-.54l-3 3a5 5 0 0 0 7.07 7.07l1.71-1.71"></path>
           </svg>
         </div>
-        <span class="logo-text">Shortify<span class="logo-dot">.</span></span>
+        <span class="logo-text">Shortify<span class="logo-spark">✦</span></span>
       </div>
-      <nav class="nav">
-        <a href="/docs" class="nav-link docs-link" target="_blank" rel="noopener">
+
+      <div class="header-actions">
+        <a href="/docs" class="nav-btn docs-btn" target="_blank" rel="noopener">
           <span class="pulse-dot"></span>
-          <span>Swagger API Docs</span>
-          <svg class="external-icon" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
+          <span>API Docs</span>
+          <svg class="icon-sm" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
             <path d="M18 13v6a2 2 0 0 1-2 2H5a2 2 0 0 1-2-2V8a2 2 0 0 1 2-2h6"></path>
             <polyline points="15 3 21 3 21 9"></polyline>
             <line x1="10" y1="14" x2="21" y2="3"></line>
           </svg>
         </a>
-      </nav>
+      </div>
     </header>
 
     <main class="main">
       <section class="hero">
-        <div class="hero-chip">
-          <span class="chip-sparkle">✦</span> Powered by Supabase PostgreSQL
+        <div class="badge-pill">
+          <span class="pill-dot"></span> Supabase PostgreSQL Connected
         </div>
-        <h1>Shorten your links.<br /><span class="hero-gradient">Amplify your reach.</span></h1>
-        <p class="hero-sub">Transform long, clunky URLs into memorable short links with real-time analytics & QR codes.</p>
+        <h1 class="hero-title">Shorten Links.<br /><span class="gradient-text">Track Everything.</span></h1>
+        <p class="hero-desc">Fast, memorable short links with live click analytics and automatic QR code generation.</p>
       </section>
 
-      <section class="card shorten-card" aria-labelledby="shorten-heading">
-        <h2 id="shorten-heading" class="sr-only">Shorten a URL</h2>
-
-        <form id="shorten-form" class="shorten-form" novalidate>
-          <div class="input-group">
-            <label for="long-url" class="label">Paste a long URL</label>
-            <div class="url-row">
-              <div class="input-wrapper">
-                <svg class="input-icon" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
-                  <path d="M10 13a5 5 0 0 0 7.54.54l3-3a5 5 0 0 0-7.07-7.07l-1.72 1.71"></path>
-                  <path d="M14 11a5 5 0 0 0-7.54-.54l-3 3a5 5 0 0 0 7.07 7.07l1.71-1.71"></path>
+      <!-- Main Shortener Box -->
+      <section class="shortener-container">
+        <form id="shorten-form" class="shortener-card" novalidate>
+          <div class="command-bar">
+            <div class="input-inner">
+              <svg class="search-icon" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
+                <path d="M10 13a5 5 0 0 0 7.54.54l3-3a5 5 0 0 0-7.07-7.07l-1.72 1.71"></path>
+                <path d="M14 11a5 5 0 0 0-7.54-.54l-3 3a5 5 0 0 0 7.07 7.07l1.71-1.71"></path>
+              </svg>
+              <input
+                type="url"
+                id="long-url"
+                name="long_url"
+                class="command-input"
+                placeholder="Paste your long link here..."
+                autocomplete="url"
+                required
+                spellcheck="false"
+              />
+              <button type="button" class="paste-btn" id="paste-btn" title="Paste from Clipboard">
+                <svg class="icon-sm" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
+                  <path d="M16 4h2a2 2 0 0 1 2 2v14a2 2 0 0 1-2 2H6a2 2 0 0 1-2-2V6a2 2 0 0 1 2-2h2"></path>
+                  <rect x="8" y="2" width="8" height="4" rx="1" ry="1"></rect>
                 </svg>
-                <input
-                  type="url"
-                  id="long-url"
-                  name="long_url"
-                  class="input input-url"
-                  placeholder="https://example.com/very/long/destination/url?utm_source=..."
-                  autocomplete="url"
-                  required
-                  spellcheck="false"
-                />
-              </div>
-              <button type="submit" class="btn btn-primary" id="submit-btn">
-                <span class="btn-text">Shorten URL</span>
-                <span class="btn-spinner" hidden aria-hidden="true"></span>
+                <span>Paste</span>
               </button>
             </div>
-            <p class="field-error" id="url-error" role="alert" hidden></p>
+
+            <button type="submit" class="submit-btn" id="submit-btn">
+              <span class="btn-label">Shorten</span>
+              <kbd class="shortcut-kbd">↵</kbd>
+              <span class="btn-spinner" hidden aria-hidden="true"></span>
+            </button>
           </div>
 
-          <details class="advanced">
-            <summary class="advanced-toggle">
-              <svg class="gear-icon" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
+          <p class="field-error" id="url-error" role="alert" hidden></p>
+
+          <!-- Domain Live Preview -->
+          <div class="domain-preview" id="domain-preview" hidden>
+            <span class="preview-label">Destination Domain:</span>
+            <span class="preview-domain" id="preview-domain"></span>
+          </div>
+
+          <!-- Advanced Options Drawer -->
+          <details class="advanced-drawer">
+            <summary class="drawer-trigger">
+              <svg class="icon-sm gear-icon" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
                 <circle cx="12" cy="12" r="3"></circle>
                 <path d="M19.4 15a1.65 1.65 0 0 0 .33 1.82l.06.06a2 2 0 0 1 0 2.83 2 2 0 0 1-2.83 0l-.06-.06a1.65 1.65 0 0 0-1.82-.33 1.65 1.65 0 0 0-1 1.51V21a2 2 0 0 1-2 2 2 2 0 0 1-2-2v-.09A1.65 1.65 0 0 0 9 19.4a1.65 1.65 0 0 0-1.82.33l-.06.06a2 2 0 0 1-2.83 0 2 2 0 0 1 0-2.83l.06-.06a1.65 1.65 0 0 0 .33-1.82 1.65 1.65 0 0 0-1.51-1H3a2 2 0 0 1-2-2 2 2 0 0 1 2-2h.09A1.65 1.65 0 0 0 4.6 9a1.65 1.65 0 0 0-.33-1.82l-.06-.06a2 2 0 0 1 0-2.83 2 2 0 0 1 2.83 0l.06.06a1.65 1.65 0 0 0 1.82.33H9a1.65 1.65 0 0 0 1-1.51V3a2 2 0 0 1 2-2 2 2 0 0 1 2 2v.09a1.65 1.65 0 0 0 1 1.51 1.65 1.65 0 0 0 1.82-.33l.06-.06a2 2 0 0 1 2.83 0 2 2 0 0 1 0 2.83l-.06.06a1.65 1.65 0 0 0-.33 1.82V9a1.65 1.65 0 0 0 1.51 1H21a2 2 0 0 1 2 2 2 2 0 0 1-2 2h-.09a1.65 1.65 0 0 0-1.51 1z"></path>
               </svg>
-              <span>Custom Alias & Link Expiration</span>
+              <span>Custom Alias & Expiration</span>
             </summary>
-            <div class="advanced-body">
-              <div class="advanced-grid">
-                <div class="input-group">
-                  <label for="custom-alias" class="label">Custom Alias <span class="label-hint">(optional)</span></label>
+            <div class="drawer-content">
+              <div class="drawer-grid">
+                <div class="field-group">
+                  <label for="custom-alias" class="field-label">Custom Slug <span class="label-opt">(optional)</span></label>
                   <input
                     type="text"
                     id="custom-alias"
                     name="custom_alias"
-                    class="input"
-                    placeholder="e.g. my-awesome-link"
+                    class="field-input"
+                    placeholder="my-custom-slug"
                     minlength="3"
                     maxlength="20"
                     pattern="[A-Za-z0-9_-]+"
                     spellcheck="false"
                   />
-                  <p class="field-hint">3–20 characters: letters, numbers, hyphens & underscores</p>
+                  <p class="field-tip">3–20 characters: letters, numbers, hyphens & underscores</p>
                 </div>
-                <div class="input-group">
-                  <label for="expires-at" class="label">Expiration Date <span class="label-hint">(optional)</span></label>
-                  <input type="datetime-local" id="expires-at" name="expires_at" class="input" />
+                <div class="field-group">
+                  <label for="expires-at" class="field-label">Expires On <span class="label-opt">(optional)</span></label>
+                  <input type="datetime-local" id="expires-at" name="expires_at" class="field-input" />
                 </div>
               </div>
             </div>
@@ -114,116 +130,119 @@
         </form>
       </section>
 
-      <section class="card result-card" id="result-card" hidden aria-live="polite">
-        <div class="result-header">
-          <span class="result-badge">⚡ Ready to Share</span>
-          <span class="db-badge">Stored in Supabase DB</span>
+      <!-- Result Card -->
+      <section class="result-box" id="result-card" hidden aria-live="polite">
+        <div class="result-top">
+          <span class="status-chip"><span class="chip-dot"></span> Ready to share</span>
+          <span class="supa-chip">Supabase DB</span>
         </div>
-        <div class="result-url-row">
-          <a href="#" id="result-link" class="result-link" target="_blank" rel="noopener noreferrer"></a>
-          <div class="action-buttons">
-            <button type="button" class="btn btn-copy" id="copy-btn" title="Copy to clipboard">
-              <svg class="icon" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
+
+        <div class="result-main">
+          <a href="#" id="result-link" class="short-url-link" target="_blank" rel="noopener noreferrer"></a>
+
+          <div class="btn-group">
+            <button type="button" class="action-btn copy-btn" id="copy-btn" title="Copy to clipboard">
+              <svg class="btn-icon" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
                 <rect x="9" y="9" width="13" height="13" rx="2" />
                 <path d="M5 15H4a2 2 0 0 1-2-2V4a2 2 0 0 1 2-2h9a2 2 0 0 1 2 2v1" />
               </svg>
-              <span id="copy-label">Copy Link</span>
+              <span id="copy-label">Copy</span>
             </button>
-            <button type="button" class="btn btn-secondary" id="qr-btn" title="Generate QR Code">
-              <svg class="icon" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
+
+            <button type="button" class="action-btn icon-only-btn" id="qr-btn" title="Generate QR Code">
+              <svg class="btn-icon" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
                 <rect x="3" y="3" width="7" height="7"></rect>
                 <rect x="14" y="3" width="7" height="7"></rect>
                 <rect x="14" y="14" width="7" height="7"></rect>
                 <rect x="3" y="14" width="7" height="7"></rect>
               </svg>
-              <span>QR Code</span>
             </button>
-            <button type="button" class="btn btn-secondary" id="stats-btn" title="View Real-Time Analytics">
-              <svg class="icon" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
+
+            <button type="button" class="action-btn icon-only-btn" id="stats-btn" title="View Analytics">
+              <svg class="btn-icon" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
                 <line x1="18" y1="20" x2="18" y2="10"></line>
                 <line x1="12" y1="20" x2="12" y2="4"></line>
                 <line x1="6" y1="20" x2="6" y2="14"></line>
               </svg>
-              <span>Analytics</span>
             </button>
           </div>
         </div>
-        <p class="result-original">
-          <span class="result-original-label">Destination:</span>
-          <span id="result-original" class="result-original-url"></span>
-        </p>
+
+        <div class="result-dest">
+          <span class="dest-label">Original:</span>
+          <span id="result-original" class="dest-url"></span>
+        </div>
       </section>
 
-      <!-- History Card -->
-      <section class="card history-card" id="history-card" hidden>
-        <div class="history-header">
-          <h2 class="history-title">Recent Links</h2>
-          <span class="history-count" id="history-count">0 items</span>
+      <!-- History Section -->
+      <section class="history-box" id="history-card" hidden>
+        <div class="history-top">
+          <h3>Recent Short Links</h3>
+          <span class="count-tag" id="history-count">0 links</span>
         </div>
-        <ul class="history-list" id="history-list"></ul>
+        <ul class="history-items" id="history-list"></ul>
       </section>
 
-      <!-- Features Section -->
-      <section class="features-grid">
-        <div class="feature-card">
-          <div class="feature-icon">⚡</div>
-          <h3>Base62 Encoding</h3>
-          <p>Super clean, highly compact short codes generated in milliseconds.</p>
+      <!-- Highlights Grid -->
+      <section class="highlights-grid">
+        <div class="highlight-card">
+          <div class="hl-icon">⚡</div>
+          <h4>Base62 Speed</h4>
+          <p>Instant, ultra-short links generated in under 15ms.</p>
         </div>
-        <div class="feature-card">
-          <div class="feature-icon">🗄️</div>
-          <h3>Supabase Database</h3>
-          <p>PostgreSQL persistence with RLS security policies & instant query caching.</p>
+        <div class="highlight-card">
+          <div class="hl-icon">🗄️</div>
+          <h4>Supabase Storage</h4>
+          <p>PostgreSQL persistence with complete Row Level Security.</p>
         </div>
-        <div class="feature-card">
-          <div class="feature-icon">📊</div>
-          <h3>Real-Time Analytics</h3>
-          <p>Track live click counts, creation timestamps & link expiration status.</p>
+        <div class="highlight-card">
+          <div class="hl-icon">📊</div>
+          <h4>Live Analytics</h4>
+          <p>Track link clicks, creation timestamps & expiration live.</p>
         </div>
       </section>
     </main>
 
     <footer class="footer">
-      <p>Built with FastAPI & Supabase · <a href="/docs" target="_blank">Swagger Docs</a> · <a href="/health" target="_blank">System Health</a></p>
+      <p>Built with FastAPI & Supabase · <a href="/docs" target="_blank">Swagger API</a> · <a href="/health" target="_blank">Health</a></p>
     </footer>
   </div>
 
   <!-- QR Code Modal -->
   <div class="modal-overlay" id="qr-modal" hidden>
     <div class="modal-card">
-      <button class="modal-close" id="qr-modal-close" aria-label="Close modal">&times;</button>
+      <button class="modal-close-btn" id="qr-modal-close" aria-label="Close">&times;</button>
       <h3>Scan QR Code</h3>
-      <p class="modal-sub">Scan with any smartphone camera to open your short link.</p>
-      <div class="qr-container" id="qr-container"></div>
-      <p class="qr-link-text" id="qr-modal-url"></p>
-      <div class="modal-actions">
-        <button type="button" class="btn btn-primary" id="download-qr-btn">Download QR Code</button>
-      </div>
+      <p class="modal-desc">Point any smartphone camera to open your shortened URL.</p>
+      <div class="qr-box" id="qr-container"></div>
+      <p class="qr-url-text" id="qr-modal-url"></p>
+      <button type="button" class="download-btn" id="download-qr-btn">Download QR Code</button>
     </div>
   </div>
 
   <!-- Stats Modal -->
   <div class="modal-overlay" id="stats-modal" hidden>
     <div class="modal-card">
-      <button class="modal-close" id="stats-modal-close" aria-label="Close modal">&times;</button>
-      <h3>Live Link Analytics</h3>
-      <p class="modal-sub">Real-time statistics fetched from Supabase PostgreSQL.</p>
-      <div class="stats-grid">
-        <div class="stat-box">
-          <span class="stat-label">Total Clicks</span>
-          <span class="stat-value" id="stat-clicks">0</span>
+      <button class="modal-close-btn" id="stats-modal-close" aria-label="Close">&times;</button>
+      <h3>Link Analytics</h3>
+      <p class="modal-desc">Real-time stats from Supabase PostgreSQL database.</p>
+
+      <div class="metrics-grid">
+        <div class="metric-card">
+          <span class="metric-title">Total Clicks</span>
+          <span class="metric-val" id="stat-clicks">0</span>
         </div>
-        <div class="stat-box">
-          <span class="stat-label">Status</span>
-          <span class="stat-value status-active" id="stat-status">Active</span>
+        <div class="metric-card">
+          <span class="metric-title">Status</span>
+          <span class="metric-val active-status" id="stat-status">Active</span>
         </div>
-        <div class="stat-box full-width">
-          <span class="stat-label">Created At</span>
-          <span class="stat-value-sm" id="stat-created">-</span>
+        <div class="metric-card full">
+          <span class="metric-title">Created At</span>
+          <span class="metric-sub" id="stat-created">-</span>
         </div>
-        <div class="stat-box full-width">
-          <span class="stat-label">Expires At</span>
-          <span class="stat-value-sm" id="stat-expires">Never</span>
+        <div class="metric-card full">
+          <span class="metric-title">Expires At</span>
+          <span class="metric-sub" id="stat-expires">Never</span>
         </div>
       </div>
     </div>
