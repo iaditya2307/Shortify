@@ -154,7 +154,6 @@ function generateQRCode(url) {
     qr.make();
     qrContainer.innerHTML = qr.createImgTag(5, 10);
   } else {
-    // Fallback using public API
     const img = document.createElement("img");
     img.src = `https://api.qrserver.com/v1/create-qr-code/?size=200x200&data=${encodeURIComponent(url)}`;
     img.alt = "QR Code";
@@ -286,6 +285,13 @@ qrModal.addEventListener("click", (e) => {
 });
 statsModal.addEventListener("click", (e) => {
   if (e.target === statsModal) statsModal.hidden = true;
+});
+
+document.addEventListener("keydown", (e) => {
+  if (e.key === "Escape") {
+    qrModal.hidden = true;
+    statsModal.hidden = true;
+  }
 });
 
 downloadQrBtn.addEventListener("click", () => {

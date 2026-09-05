@@ -32,6 +32,13 @@ html {
   -webkit-font-smoothing: antialiased;
 }
 
+[hidden],
+.modal-overlay[hidden],
+.card[hidden],
+.toast[hidden] {
+  display: none !important;
+}
+
 body {
   margin: 0;
   min-height: 100vh;
@@ -721,14 +728,18 @@ body {
   right: 1.25rem;
   background: none;
   border: none;
-  font-size: 1.5rem;
+  font-size: 1.75rem;
+  line-height: 1;
   color: var(--text-dim);
   cursor: pointer;
-  transition: color 0.2s;
+  padding: 0.25rem 0.5rem;
+  border-radius: 6px;
+  transition: all 0.2s;
 }
 
 .modal-close:hover {
   color: #fff;
+  background: rgba(255, 255, 255, 0.1);
 }
 
 .modal-card h3 {
