@@ -18,7 +18,10 @@ from .service import (
     resolve_short_code,
 )
 
-Base.metadata.create_all(bind=engine)
+try:
+    Base.metadata.create_all(bind=engine)
+except Exception as err:
+    print("Database metadata creation skipped:", err)
 
 BASE_DIR = Path(__file__).resolve().parent
 STATIC_DIR = BASE_DIR / "static"

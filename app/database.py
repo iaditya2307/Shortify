@@ -16,7 +16,15 @@ elif env_path.exists():
 SUPABASE_URL = os.getenv("NEXT_PUBLIC_SUPABASE_URL") or os.getenv("SUPABASE_URL", "https://eoysygjxazvltwfzvcsv.supabase.co")
 SUPABASE_KEY = os.getenv("NEXT_PUBLIC_SUPABASE_PUBLISHABLE_KEY") or os.getenv("SUPABASE_KEY", "sb_publishable_p-oNgBmJus9lsR3aEy_cyg_hh5KL35j")
 
-DATABASE_URL = os.getenv("DATABASE_URL", "sqlite:///./url_shortener.db")
+db_url = os.getenv("DATABASE_URL")
+if not db_url:
+    # Use /tmp for serverless environment compatibility (Vercel, AWS Lambda, Cloud Functions)
+    if os.getenv("VERCEL") or os.path.exists("/tmp"):
+        db_url = "sqlite:////tmp/url_shortener.db"
+    else:
+        db_url = "sqlite:///./url_shortener.db"
+
+DATABASE_URL = db_url
 
 connect_args = {"check_same_thread": False} if DATABASE_URL.startswith("sqlite") else {}
 
