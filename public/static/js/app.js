@@ -166,7 +166,11 @@ function generateQRCode(url) {
 // Fetch Stats from API
 async function fetchAndShowStats(shortCode) {
   try {
-    const res = await fetch(`/api/v1/urls/${shortCode}`);
+    let res = await fetch(`/api/v1/urls/${shortCode}`);
+    if (res.status === 404) {
+      res = await fetch(`/v1/urls/${shortCode}`);
+    }
+
     if (!res.ok) {
       showToast("Could not fetch stats for this link.", true);
       return;
@@ -221,11 +225,19 @@ form.addEventListener("submit", async (e) => {
   setLoading(true);
 
   try {
-    const res = await fetch("/api/v1/urls", {
+    let res = await fetch("/api/v1/urls", {
       method: "POST",
       headers: { "Content-Type": "application/json" },
       body: JSON.stringify(payload),
     });
+
+    if (res.status === 404) {
+      res = await fetch("/v1/urls", {
+        method: "POST",
+        headers: { "Content-Type": "application/json" },
+        body: JSON.stringify(payload),
+      });
+    }
 
     const body = await res.json().catch(() => ({}));
 
