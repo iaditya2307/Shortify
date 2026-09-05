@@ -29,7 +29,7 @@ if not (STATIC_DIR / "index.html").exists():
         STATIC_DIR = BASE_DIR.parent / "public"
 
 RESERVED_PATHS = frozenset({
-    "api", "docs", "redoc", "health", "static", "openapi.json", "v1"
+    "api", "docs", "redoc", "health", "static", "openapi.json", "v1", "urls"
 })
 
 app = FastAPI(
@@ -57,6 +57,7 @@ def health():
 
 @app.post("/api/v1/urls", response_model=CreateURLResponse, status_code=201)
 @app.post("/v1/urls", response_model=CreateURLResponse, status_code=201)
+@app.post("/urls", response_model=CreateURLResponse, status_code=201)
 def shorten_url(
     payload: CreateURLRequest,
     request: Request,
@@ -85,6 +86,7 @@ def shorten_url(
 
 @app.get("/api/v1/urls/{short_code}", response_model=URLStatsResponse)
 @app.get("/v1/urls/{short_code}", response_model=URLStatsResponse)
+@app.get("/urls/{short_code}", response_model=URLStatsResponse)
 def stats(short_code: str, db: Session = Depends(get_db)):
     try:
         mapping = get_stats(db, short_code)
@@ -103,6 +105,7 @@ def stats(short_code: str, db: Session = Depends(get_db)):
 
 @app.delete("/api/v1/urls/{short_code}", status_code=204)
 @app.delete("/v1/urls/{short_code}", status_code=204)
+@app.delete("/urls/{short_code}", status_code=204)
 def delete_url(short_code: str, db: Session = Depends(get_db)):
     try:
         delete_short_url(db, short_code)

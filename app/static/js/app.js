@@ -170,6 +170,9 @@ async function fetchAndShowStats(shortCode) {
     if (res.status === 404) {
       res = await fetch(`/v1/urls/${shortCode}`);
     }
+    if (res.status === 404) {
+      res = await fetch(`/urls/${shortCode}`);
+    }
 
     if (!res.ok) {
       showToast("Could not fetch stats for this link.", true);
@@ -233,6 +236,14 @@ form.addEventListener("submit", async (e) => {
 
     if (res.status === 404) {
       res = await fetch("/v1/urls", {
+        method: "POST",
+        headers: { "Content-Type": "application/json" },
+        body: JSON.stringify(payload),
+      });
+    }
+
+    if (res.status === 404) {
+      res = await fetch("/urls", {
         method: "POST",
         headers: { "Content-Type": "application/json" },
         body: JSON.stringify(payload),
