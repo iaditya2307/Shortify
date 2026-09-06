@@ -41,7 +41,7 @@ let currentShortData = null;
 
 function showToast(message, isError = false) {
   toast.textContent = message;
-  toast.className = "toast show" + (isError ? " error" : "");
+  toast.className = "toast-notification show" + (isError ? " error" : "");
   toast.hidden = false;
   clearTimeout(showToast._timer);
   showToast._timer = setTimeout(() => {
@@ -52,9 +52,13 @@ function showToast(message, isError = false) {
 
 function setLoading(loading) {
   submitBtn.disabled = loading;
-  submitBtn.querySelector(".btn-label").hidden = loading;
-  submitBtn.querySelector(".shortcut-kbd").hidden = loading;
-  submitBtn.querySelector(".btn-spinner").hidden = !loading;
+  const labelEl = submitBtn.querySelector(".btn-label");
+  const kbdEl = submitBtn.querySelector(".shortcut-kbd");
+  const spinnerEl = submitBtn.querySelector(".btn-spinner");
+
+  if (labelEl) labelEl.hidden = loading;
+  if (kbdEl) kbdEl.hidden = loading;
+  if (spinnerEl) spinnerEl.hidden = !loading;
 }
 
 function showError(message) {
@@ -110,18 +114,20 @@ function renderHistory() {
   }
 
   historyCard.hidden = false;
-  historyCount.textContent = `${history.length} saved`;
+  historyCount.textContent = `${history.length} link${history.length === 1 ? '' : 's'}`;
   historyList.innerHTML = history
     .map(
       (item) => `
-    <li class="history-item">
-      <a href="${item.short_url}" class="history-short" target="_blank" rel="noopener noreferrer">${item.short_code}</a>
-      <span class="history-original" title="${escapeHtml(item.long_url)}">${escapeHtml(item.long_url)}</span>
-      <div class="history-actions">
-        <button type="button" class="history-btn history-copy-btn" data-url="${escapeHtml(item.short_url)}" title="Copy Link">Copy</button>
-        <button type="button" class="history-btn history-stats-btn" data-code="${escapeHtml(item.short_code)}" title="View Stats">Stats</button>
-      </div>
-    </li>`
+    <tr>
+      <td class="col-short">
+        <a href="${item.short_url}" class="link-primary" target="_blank" rel="noopener noreferrer">${item.short_code}</a>
+      </td>
+      <td class="col-long" title="${escapeHtml(item.long_url)}">${escapeHtml(item.long_url)}</td>
+      <td class="text-right">
+        <button type="button" class="btn-table history-copy-btn" data-url="${escapeHtml(item.short_url)}" title="Copy Link">Copy</button>
+        <button type="button" class="btn-table history-stats-btn" data-code="${escapeHtml(item.short_code)}" title="View Stats">Stats</button>
+      </td>
+    </tr>`
     )
     .join("");
 
@@ -201,7 +207,7 @@ async function fetchAndShowStats(shortCode) {
     const data = await res.json();
     statClicks.textContent = data.click_count || 0;
     statStatus.textContent = data.is_active ? "Active" : "Inactive";
-    statStatus.className = "metric-val " + (data.is_active ? "active-status" : "error");
+    statStatus.className = "stat-cell-value " + (data.is_active ? "text-success" : "error");
     statCreated.textContent = data.created_at ? new Date(data.created_at).toLocaleString() : "-";
     statExpires.textContent = data.expires_at ? new Date(data.expires_at).toLocaleString() : "Never";
     statsModal.hidden = false;
