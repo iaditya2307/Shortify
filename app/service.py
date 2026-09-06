@@ -91,6 +91,23 @@ def create_short_url(
                 raise AliasAlreadyExists("Custom alias already exists.")
             raise
 
+    # Deduplication / Idempotency check for standard short link requests
+    if not expires_at:
+        try:
+            existing = (
+                supabase.table("url_mappings")
+                .select("*")
+                .eq("long_url", long_url)
+                .eq("is_active", True)
+                .is_("expires_at", "null")
+                .limit(1)
+                .execute()
+            )
+            if existing.data and len(existing.data) > 0:
+                return _supabase_row_to_dto(existing.data[0])
+        except Exception:
+            pass
+
     # Auto-generate cryptographically secure 7-character Base62 code with retry on collision
     max_retries = 5
     for _ in range(max_retries):
