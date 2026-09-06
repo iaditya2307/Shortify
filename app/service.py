@@ -3,7 +3,7 @@ from dataclasses import dataclass
 from datetime import datetime, timezone
 from sqlalchemy.orm import Session
 
-from .base62 import encode_base62
+from .base62 import encode_base62, generate_random_code
 from .database import get_supabase_client
 from .models import URLMapping
 
@@ -72,16 +72,6 @@ def create_short_url(
         if not ALIAS_PATTERN.match(custom_alias):
             raise InvalidAlias("Alias may contain only letters, numbers, - and _.")
 
-        existing = (
-            supabase.table("url_mappings")
-            .select("*")
-            .eq("short_code", custom_alias)
-            .execute()
-        )
-
-        if existing.data and len(existing.data) > 0:
-            raise AliasAlreadyExists("Custom alias already exists.")
-
         payload = {
             "short_code": custom_alias,
             "long_url": long_url,
@@ -90,40 +80,42 @@ def create_short_url(
             "click_count": 0,
         }
 
-        res = supabase.table("url_mappings").insert(payload).execute()
-        if not res.data:
-            raise RuntimeError("Failed to insert URL mapping into Supabase.")
-        return _supabase_row_to_dto(res.data[0])
+        try:
+            res = supabase.table("url_mappings").insert(payload).execute()
+            if res.data and len(res.data) > 0:
+                return _supabase_row_to_dto(res.data[0])
+            raise RuntimeError("Failed to insert custom alias URL mapping into Supabase.")
+        except Exception as exc:
+            err_msg = str(exc).lower()
+            if "23505" in err_msg or "duplicate" in err_msg or "already exists" in err_msg:
+                raise AliasAlreadyExists("Custom alias already exists.")
+            raise
 
-    # Case: Generate unique short code
-    temp_payload = {
-        "short_code": "pending_" + str(datetime.now(timezone.utc).timestamp()),
-        "long_url": long_url,
-        "expires_at": expires_at.isoformat() if expires_at else None,
-        "is_active": True,
-        "click_count": 0,
-    }
+    # Auto-generate cryptographically secure 7-character Base62 code with retry on collision
+    max_retries = 5
+    for _ in range(max_retries):
+        short_code = generate_random_code(7)
+        payload = {
+            "short_code": short_code,
+            "long_url": long_url,
+            "expires_at": expires_at.isoformat() if expires_at else None,
+            "is_active": True,
+            "click_count": 0,
+        }
 
-    insert_res = supabase.table("url_mappings").insert(temp_payload).execute()
-    if not insert_res.data:
-        raise RuntimeError("Failed to create short URL in Supabase.")
+        try:
+            res = supabase.table("url_mappings").insert(payload).execute()
+            if res.data and len(res.data) > 0:
+                return _supabase_row_to_dto(res.data[0])
+        except Exception as exc:
+            err_msg = str(exc).lower()
+            if "23505" in err_msg or "duplicate" in err_msg or "already exists" in err_msg:
+                # Collision occurred on unique constraint, retry with new random code
+                continue
+            raise
 
-    inserted_row = insert_res.data[0]
-    row_id = inserted_row["id"]
-    generated_code = encode_base62(row_id + 1_000_000)
+    raise RuntimeError("Failed to generate a unique short code after multiple attempts.")
 
-    # Update with generated base62 short_code
-    update_res = (
-        supabase.table("url_mappings")
-        .update({"short_code": generated_code})
-        .eq("id", row_id)
-        .execute()
-    )
-
-    if not update_res.data:
-        raise RuntimeError("Failed to update short code in Supabase.")
-
-    return _supabase_row_to_dto(update_res.data[0])
 
 
 def resolve_short_code(db: Session | None, short_code: str) -> URLMappingDTO:

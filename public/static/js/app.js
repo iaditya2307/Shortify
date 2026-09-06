@@ -492,8 +492,8 @@ function App() {
         {/* Specifications Grid */}
         <section className="specs-grid">
           <div className="spec-card">
-            <h3 className="spec-title">⚡ Base62 Encoding</h3>
-            <p className="spec-text">Fast 6-character short link generation with high collision resistance.</p>
+            <h3 className="spec-title">⚡ Cryptographic Base62</h3>
+            <p className="spec-text">Non-predictable 7-character random Base62 codes generated with CSPRNG and optimistic DB collision retries.</p>
           </div>
           <div className="spec-card">
             <h3 className="spec-title">🗄️ Supabase PostgreSQL</h3>
